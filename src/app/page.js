@@ -27,7 +27,9 @@ export default function Home() {
     generateSyntheticData,
     uploadToFilecoin,
     downloadFromFilecoin,
-    currentCid
+    currentCid,
+    isDownloading,
+    isUploading
   } = useStressTester()
 
   return (
@@ -56,6 +58,8 @@ export default function Home() {
           uploadToFilecoin={uploadToFilecoin}
           downloadFromFilecoin={downloadFromFilecoin}
           currentCid={currentCid}
+          isUploading={isUploading}
+          isDownloading={isDownloading}
         />
         
         {analysisResults && (

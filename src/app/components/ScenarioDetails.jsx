@@ -176,7 +176,7 @@ export default function ScenarioDetails({ selectedProtocol, testScenario }) {
       {/* Main Scenario Card */}
       <div className="glass-card p-8">
         <div className="flex items-start justify-between mb-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-start gap-4">
             <div className={`p-4 rounded-2xl bg-gradient-to-br ${scenario.color} shadow-lg`}>
               <ScenarioIcon className="w-8 h-8 text-white" />
             </div>

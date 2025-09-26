@@ -7,7 +7,9 @@ export default function ActionButtons({
   generateSyntheticData,
   uploadToFilecoin,
   downloadFromFilecoin,
-  currentCid
+  currentCid,
+  isUploading,
+  isDownloading
 }) {
   return (
     <div className="flex justify-center gap-4 mb-8 flex-wrap">
@@ -28,19 +30,25 @@ export default function ActionButtons({
         <>
           <button
             onClick={uploadToFilecoin}
+            disabled={isUploading}
             className="btn-secondary flex items-center gap-2"
           >
             <Upload className="w-5 h-5" />
-            Upload to Filecoin
+            {
+              isUploading ? 'Uploading to Filecoin...' : currentCid ? 'Re-upload to Filecoin' : 'Upload to Filecoin'
+            }
           </button>
           
           <button
             onClick={downloadFromFilecoin}
-            disabled={!generatedData.length && !currentCid}
+            disabled={isDownloading}
             className="px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-lg hover:from-purple-600 hover:to-pink-600 flex items-center gap-2 transform hover:scale-105 transition-all duration-200"
           >
             <Download className="w-5 h-5" />
-            Download from Filecoin
+            {
+              isDownloading ? 'Downloading...' : 'Download from Filecoin'
+            }
+            {/* Download from Filecoin */}
           </button>
         </>
       )}

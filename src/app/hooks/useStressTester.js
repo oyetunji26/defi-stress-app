@@ -10,6 +10,8 @@ export function useStressTester() {
   const [datasetSize, setDatasetSize] = useState(1000)
   const [analysisResults, setAnalysisResults] = useState(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [ isUploading, setIsUploading] = useState(false)
+  const [ isDownloading, setIsDownloading] = useState(false)
   const [generatedData, setGeneratedData] = useState([])
   const [vulnerabilities, setVulnerabilities] = useState([])
 
@@ -53,6 +55,7 @@ export function useStressTester() {
   }
 
 const uploadToFilecoin = async () => {
+  setIsUploading(true);
   try {
     console.log('🚀 Starting upload process...')
     console.log('Data to upload:', {
@@ -74,18 +77,47 @@ const uploadToFilecoin = async () => {
     console.error('Error message:', error.message)
     console.error('Error stack:', error.stack)
     toast.error(`Upload failed: ${error.message}`)
+  } finally {
+    setIsUploading(false);
   }
 }
 
-  const downloadFromFilecoin = async () => {
-    try {
-      const data = await downloadDataFromFilecoin(currentCid)
-      toast.success('Dataset downloaded from Filecoin successfully!\nData retrieved from decentralized storage.')
-    } catch (error) {
-      console.error('Download failed:', error)
-      toast.failure('Download from Filecoin failed. Please check the CID and try again.')
-    }
+const downloadFromFilecoin = async () => {
+  setIsDownloading(true);
+  try {
+    const data = await downloadDataFromFilecoin(currentCid);
+    
+    // Create formatted JSON
+    const jsonData = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    
+    // Calculate file size
+    const fileSize = (blob.size / 1024 / 1024).toFixed(2); // MB
+    
+    const url = URL.createObjectURL(blob);
+    
+    // Generate descriptive filename
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+    const filename = `${selectedProtocol}-${testScenario}-${datasetSize}wallets-${timestamp}.json`;
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success(`Dataset downloaded successfully!\nFile: ${filename}\nSize: ${fileSize} MB\nData retrieved from Filecoin CID: ${currentCid}`);
+    
+  } catch (error) {
+    console.error('Download failed:', error);
+    toast.error('Download from Filecoin failed. Please check the CID and try again.');
+  } finally {
+    setIsDownloading(false);
   }
+};
 
   return {
     selectedProtocol,
@@ -101,6 +133,8 @@ const uploadToFilecoin = async () => {
     generateSyntheticData,
     uploadToFilecoin,
     downloadFromFilecoin,
-    currentCid
+    currentCid,
+    isUploading,
+    isDownloading
   }
 }

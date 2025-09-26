@@ -1,6 +1,6 @@
 // app/hooks/useStressTester.js
 import { useState } from 'react'
-import { generateSyntheticDataset } from '../lib/dataGenerator'
+import { generateSyntheticDataset } from '../lib/dataGenerators'
 import { uploadDataToFilecoin, downloadDataFromFilecoin } from '../lib/filecoin'
 import toast from 'react-hot-toast'
 
@@ -22,11 +22,11 @@ export function useStressTester() {
       // Simulate AI-powered data generation with realistic delays
       await new Promise(resolve => setTimeout(resolve, 3000))
       
-      const { data, vulnerabilities: vulns } = generateSyntheticDataset({
+      const { data, vulnerabilities: vulns } = await generateSyntheticDataset({
         protocol: selectedProtocol,
         scenario: testScenario,
         size: datasetSize
-      })
+      });
       
       setGeneratedData(data)
       setVulnerabilities(vulns)
